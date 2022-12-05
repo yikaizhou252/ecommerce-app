@@ -47,8 +47,7 @@ const PostList = () => {
             </div>
         );
     });
-    
-   
+
     return (
         <>
             <h1>Posts</h1>

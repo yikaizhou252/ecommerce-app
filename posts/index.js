@@ -42,14 +42,13 @@ app.post('/posts', async (req, res) => {
         data: { id, title },
     });
 
-    // send ACK
     // 201 means 'resource created'
     res.status(201).send(allPosts[id]);
 });
 
 // defining the endpoint for reading events from Q
 app.post('/events', (req, res) => {
-    console.log("Received event: ", req.body.type);
+    // console.log("Received event: ", req.body.type);
     res.send({});
 });
 

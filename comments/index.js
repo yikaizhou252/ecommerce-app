@@ -43,6 +43,7 @@ app.post('/posts/:id/comments', async (req, res) => {
 
     // 1: get the array of existing comments
     // 2: add comment to array and update the array
+    // 3: default status is pending
     const allCommentsInPost = commentsByPostId[postId] || [];
     allCommentsInPost.push({
         id : commentId, 
@@ -50,6 +51,7 @@ app.post('/posts/:id/comments', async (req, res) => {
         status: 'pending',
     });
 
+    // push comment created to event Q
     await axios.post('http://localhost:4005/events', {
         type: 'CommentCreated',
         data: { 
@@ -59,14 +61,48 @@ app.post('/posts/:id/comments', async (req, res) => {
             postID: req.params.id 
         }
     });
+
+    // push comment created to moderator
+    // dont need because event bus does that
+    // await axios.post('http://localhost:4069/events', {
+    //     type: 'CommentCreated',
+    //     data: {
+    //         id: commentId,
+    //         content,
+    //         status: 'pending',
+    //         postID: req.params.id
+    //     }
+    // });
     // remember, arrays are immutable in JS
     commentsByPostId[req.params.id] = allCommentsInPost;
     res.status(201).send(allCommentsInPost);
 });
 
-// endpoint to read events from event Q
-app.post('/events', (req, res) => {
-    console.log("Event received: ", req.body.type);
+// event listener
+app.post('/events', async (req, res) => {
+    // console.log("Event received: ", req.body.type);
+    const { type, data } = req.body;
+    console.log(req.body);
+
+    // handle comments based on moderation
+    if(type === 'CommentModerated'){
+
+        const { postID, id, status, content } = data;
+        const comments = commentsByPostId[postID];
+        const comment = comments.find( com => com.id === id );
+
+        comment.status = status;
+
+        await axios.post('http://localhost:4005/events', {
+            type: 'CommentUpdated',
+            data: {
+                id,
+                postID,
+                status,
+                content
+            }
+        });
+    }
     res.send({});
 });
 

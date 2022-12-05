@@ -10,7 +10,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// this is the memory
+// local storage of the posts and comments
 const posts = {};
  
 // const example = {
@@ -44,10 +44,15 @@ app.post('/events', (req, res) => {
             posts[id] = { id, title, comments: [] };
         }
         if (type === 'CommentCreated'){
-            console.log('comment', data)
             // push the comment onto the appropriate thread
             const { id, content, postID, status } = data;
             posts[postID].comments.push({ id, content, status })
+        }
+        if (type === 'CommentUpdated'){
+            const { id, postID, status, content } = data;
+            const comment = posts[postID].comments.find(com => com.id === id);
+            comment.status = status;
+            comment.content = comment.content + " - " + status;
         }
         res.send({});
 });

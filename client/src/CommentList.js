@@ -5,7 +5,7 @@ const CommentList = ({ fetchedComments }) => {
     fetchedComments
     //.filter( comment => comment.status === 'approved')
     .map( comment => {
-        return <li key={comment.id}>{comment.content} - {comment.status}</li>;
+        return <li key={comment.id}>{comment.content}</li>;
     });
 
     return <ul>

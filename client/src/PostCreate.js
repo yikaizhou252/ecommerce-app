@@ -3,28 +3,23 @@ import axios from 'axios'
 
 const PostCreate = () => {
 
-    const [inputText, setInputText] = useState("enter something");
+    const [inputText, setInputText] = useState("");
     const handleChange = (event) => {
         setInputText(event.target.value);
     };
 
     const handleSubmit = async (event) => {
-        // event.preventDefault();
+        event.preventDefault();
         // alert(`You have submitted: ${inputText}`);
         await axios.post('http://localhost:4000/posts', { 
             title: inputText
         });
-
         setInputText('');
     };
 
+    // right now the moderation function is only dispatched when the button is clicked
     const handleSecondaryButton = async (event) => {
         event.preventDefault();
-        const res = await axios.get('http://localhost:4002/posts');
-        await axios.post('http://localhost:4069/moderate', {
-            keyword: 'orange',
-            threads: res.data
-        })
     }
 
     return (

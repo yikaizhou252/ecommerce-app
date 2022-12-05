@@ -27,12 +27,11 @@ const CommentCreate = ({ postId }) => {
         <div>
             <form onSubmit={handleSubmit}>
                 <div className='form-group'>
-                    <label>New comment</label>
+                    <label>Comments:</label>
                     <input 
                     value={content}
                     onChange={event => setContent(event.target.value)} 
                     className='form-control'
-                    //defaultValue="I'm a comment" 
                     />
                 </div>
                 <button className='btn btn-primary'>Submit</button>
